@@ -4,567 +4,1370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEON EML Data Browser</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>GEE Rolling Average Analytics Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/2.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
     <style>
-        /* Custom font and scrollbar styles */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Sunlit Pine Palette */
+            --sunlit-pine: #4a5d2f;
+            --golden-meadow: #7ba05b;
+            --honey-gold: #d4af37;
+            --warm-amber: #c7a875;
+            --cream-sunshine: #f2e6c7;
+            --summer-breeze: #fef9f0;
+            --danger-red: #EF4444;
+
+            /* Derived variables */
+            --bg-main: var(--summer-breeze);
+            --bg-card: white;
+            --bg-card-subtle: var(--cream-sunshine);
+            --bg-hover: rgba(74, 93, 47, 0.05);
+            --text-primary: var(--sunlit-pine);
+            --text-secondary: #5a723a;
+            --text-muted: var(--warm-amber);
+            --text-on-accent: white;
+            --border-primary: var(--warm-amber);
+            --border-subtle: rgba(74, 93, 47, 0.2);
+            --accent-primary: var(--golden-meadow);
+            --accent-secondary: var(--honey-gold);
+            --accent-gradient: linear-gradient(135deg, var(--golden-meadow) 0%, #6a8d4a 100%);
+            --glow-accent: 0 0 20px rgba(123, 160, 91, 0.5);
+            --glow-secondary: 0 0 20px rgba(212, 175, 55, 0.4);
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #a8b5c4;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #8895a4;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .hero-bg {
-            background-image: url('https://i.imgur.com/SRmc5dh.jpeg');
+        .hero-section {
+            height: 70vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4rem;
+            background-image: url('https://i.imgur.com/1ni1cSt.jpeg');
             background-size: cover;
             background-position: center;
         }
 
-        .icon {
-            width: 1.25rem;
-            height: 1.25rem;
-            stroke-width: 2;
-            margin-right: 0.75rem;
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent 40%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            max-width: 900px;
+            padding: 0 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .hero-title span {
+            color: #ffffff;
+            text-align: center;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-logo {
+            height: 1.1em;
+            width: 1.1em;
+            padding: 0.1em;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border-subtle);
+            border-radius: 50%;
+            box-sizing: border-box;
+            box-shadow: var(--shadow-card);
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: #ffffff;
+            margin-bottom: 2.5rem;
+            font-weight: 500;
+            max-width: 700px;
+            margin: 0 auto 2.5rem auto;
+            line-height: 1.6;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+            padding: 1rem 2rem;
+            background: #ffffff;
+            /* Changed to solid white */
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+
+        .hero-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .hero-stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            display: block;
+        }
+
+        .hero-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-image-source {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: rgba(10, 15, 30, 0.6);
+            backdrop-filter: blur(5px);
+            color: #fef9f0;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            text-align: right;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease;
+            z-index: 2;
+            white-space: nowrap;
+            /* Ensures single line */
+        }
+
+        .hero-image-source a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .hero-image-source:hover {
+            background: rgba(10, 15, 30, 0.8);
+        }
+
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .tab-navigation {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: var(--bg-card-subtle);
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid var(--border-subtle);
+            justify-content: center;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 2rem;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-button.active {
+            background: var(--accent-gradient);
+            color: var(--text-on-accent);
+            transform: translateY(-2px);
+            box-shadow: var(--glow-accent);
+        }
+
+        .tab-button:hover:not(.active) {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .explanation-panel {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--accent-secondary);
+            box-shadow: var(--glow-secondary);
+        }
+
+        .explanation-panel h3 {
+            color: var(--accent-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .explanation-panel p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .explanation-panel code {
+            background: var(--bg-card-subtle);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-primary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .explanation-panel .highlight {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-secondary);
+            margin: 1rem 0;
+        }
+
+        .controls {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+        }
+
+        .controls:hover {
+            box-shadow: var(--shadow-elevated);
+            border-color: var(--border-primary);
+        }
+
+        .controls h3 {
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            font-size: 1.6rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .control-group input {
+            padding: 14px 18px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .control-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(123, 160, 91, 0.2);
+            background: white;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            background: var(--accent-gradient);
+            color: var(--text-on-accent);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow-accent);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-secondary);
+            color: var(--accent-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: var(--glow-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .panel:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-elevated);
+            border-color: var(--border-primary);
+        }
+
+        .panel:hover::before {
+            opacity: 1;
+        }
+
+        .panel h3 {
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+        }
+
+        .peak-metric-value {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            background-color: var(--bg-card-subtle);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--bg-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            max-width: 300px;
+            white-space: normal;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        .large-panel {
+            grid-column: 1 / -1;
+        }
+
+        .large-system-panel {
+            grid-column: 1 / -1;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 2rem;
+            background: var(--bg-card-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .legend-color-box {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .dataset-list {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-top: 1.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-secondary) transparent;
+        }
+
+        .dataset-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .dataset-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .dataset-list::-webkit-scrollbar-thumb {
+            background: var(--accent-secondary);
+            border-radius: 3px;
+        }
+
+        .dataset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .dataset-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .dataset-item:hover {
+            background: var(--bg-hover);
+            transform: translateX(4px);
+            border-color: var(--border-primary);
+        }
+
+        .dataset-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .dataset-rank {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            width: 2rem;
+            text-align: center;
             flex-shrink: 0;
+        }
+
+        .dataset-details {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .dataset-name {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .dataset-users {
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .dataset-growth {
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        #dashboardPeriodFooter {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1rem;
+            padding: 0 0 4rem 0;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* System Details Tab Styles */
+        .system-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .details-section {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+        }
+
+        .details-section h4 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .details-section ul {
+            list-style-position: inside;
+            padding-left: 1rem;
+        }
+
+        .details-section li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .math-equation {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .math-equation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+        }
+
+        .equation-title {
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .equation-explanation {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-top: 0.5rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .info-box {
+            background: rgba(123, 160, 91, 0.1);
+            border: 1px solid var(--accent-primary);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: var(--text-secondary);
+        }
+
+        .info-box .info-title {
+            color: var(--accent-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .control-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .panel,
+            .controls,
+            .explanation-panel {
+                padding: 2rem;
+            }
         }
     </style>
 </head>
 
-<body class="antialiased text-slate-800">
-    <div class="min-h-screen bg-gradient-to-br from-sky-50 to-slate-200 p-4 sm:p-6 lg:p-8">
-        <div class="max-w-7xl mx-auto">
-
-            <!-- Hero Section -->
-            <div class="hero-bg h-64 rounded-2xl shadow-lg flex items-center justify-center mb-8 p-4">
-                <div class="text-center bg-black bg-opacity-50 text-white p-6 rounded-xl">
-                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight">NEON EML Data Browser</h1>
-                    <p class="mt-2 text-lg md:text-xl text-slate-200">Explore Ecological Markup Language datasets with
-                        ease.</p>
+<body>
+    <section class="hero-section">
+        <div class="hero-content">
+            <a href="https://developers.google.com/earth-engine/datasets/community/sat-io"
+                style="text-decoration: none; color: inherit; display: block;">
+                <h1 class="hero-title">
+                    <img src="https://i.imgur.com/pCG0FFu.png" alt="Earth Engine Logo" class="hero-logo">
+                    <span>GEE&nbsp;Rolling&nbsp;Average<br>Analytics&nbsp;Dashboard</span>
+                </h1>
+                <p class="hero-subtitle">Comprehensive analytics for 30-day rolling average usage trends from the NEON
+                    Publisher Catalog.</p>
+            </a>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="heroCurrentAvg">-</span>
+                    <span class="hero-stat-label">Current 30-Day Avg</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="heroTotalDatasets">-</span>
+                    <span class="hero-stat-label">Active Datasets</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="heroGrowthRate">-</span>
+                    <span class="hero-stat-label">Trend Rate</span>
                 </div>
             </div>
+        </div>
+        <div class="hero-image-source">
+            <a href="https://www.neonscience.org/field-sites/leno" target="_blank" rel="noopener noreferrer">
+                Image Source: Lenoir Landing NEON / LENO
+            </a>
+        </div>
+    </section>
 
-            <!-- Controls -->
-            <div class="glass-card p-6 rounded-2xl shadow-md mb-8">
-                <div class="space-y-4">
-                    <div>
-                        <label for="urlInput" class="block text-lg font-semibold text-slate-700">EML File URL</label>
-                        <input type="url" id="urlInput"
-                            class="w-full px-4 py-3 bg-white/80 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
-                            placeholder="Enter EML XML URL..."
-                            value="https://gist.githubusercontent.com/samapriya/c0b6605d278796a3746834bd88c03ce9/raw/87777ad25ed28f246389f9468060668edcf334dd/NEON_D02_BLAN_DP1_10041_001_EML_20220906-20220907_20250129T000730Z.xml">
-                    </div>
-                    <button
-                        class="w-full sm:w-auto px-6 py-3 bg-sky-600 text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-transform hover:scale-105"
-                        onclick="loadFromUrl()">Load from URL</button>
+    <div class="container">
+        <div class="explanation-panel">
+            <h3>🔍 Understanding Rolling Average Data</h3>
+            <p>Google Metrics CSV data contains <strong>30-day rolling averages</strong>, not daily counts. This means:
+            </p>
+            <div class="highlight">
+                <p><strong>April 15 CSV:</strong> Shows average daily users from March 16 to April 15 (30 days)</p>
+                <p><strong>April 16 CSV:</strong> Shows average daily users from March 17 to April 16 (30 days)</p>
+                <p><strong>Each data point represents:</strong> <code>Total users in 30-day window ÷ 30</code></p>
+            </div>
+        </div>
 
-                    <div class="relative py-2">
-                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                            <div class="w-full border-t border-slate-300"></div>
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="switchTab('analytics')">Analytics Dashboard</button>
+            <button class="tab-button" onclick="switchTab('system')">System Details & Metrics</button>
+        </div>
+
+        <div id="loadingMessage"
+            style="text-align: center; color: var(--text-primary); font-size: 1.5rem; padding: 5rem 0;">
+            Loading Analytics Data...
+        </div>
+
+        <div id="dashboardContent" style="display: none;">
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="tab-content active">
+                <div class="controls">
+                    <h3><span class="icon">🚀</span> Analysis Controls</h3>
+                    <div class="control-group">
+                        <label>Time Range:</label>
+                        <input type="date" id="startDate">
+                        <span style="color: var(--text-secondary);">to</span>
+                        <input type="date" id="endDate">
+                        <div class="btn-group">
+                            <button class="btn" onclick="setDateRange(30)">30 Days</button>
+                            <button class="btn" onclick="setDateRange(60)">60 Days</button>
+                            <button class="btn" onclick="setDateRange(90)">90 Days</button>
+                            <button class="btn" onclick="setDateRange(1)">Latest</button>
+                            <button class="btn btn-secondary" onclick="downloadJSON()">Download JSON</button>
                         </div>
-                        <div class="relative flex justify-center">
-                            <span
-                                class="bg-slate-100/50 px-2 text-sm text-slate-500 backdrop-blur-sm rounded-full">OR</span>
+                    </div>
+                </div>
+
+                <div class="dashboard">
+                    <div class="panel">
+                        <h3><span class="icon">📈</span> Summary Statistics</h3>
+                        <div class="panel-content" id="summaryStats"></div>
+                    </div>
+                    <div class="panel">
+                        <h3><span class="icon">🏆</span> Peak Performance</h3>
+                        <div class="panel-content" id="peakStats"></div>
+                    </div>
+                    <div class="panel">
+                        <h3><span class="icon">🛰️</span> Top Datasets</h3>
+                        <div class="dataset-list" id="datasetList"></div>
+                    </div>
+                    <div class="panel large-panel">
+                        <h3><span class="icon">📅</span> Daily Rolling Average Trends (30-Day Window)</h3>
+                        <div class="chart-container"><canvas id="dailyChart"></canvas></div>
+                    </div>
+                    <div class="panel">
+                        <h3><span class="icon">🗓️</span> Weekly Trends</h3>
+                        <div class="chart-container"><canvas id="weeklyChart"></canvas></div>
+                    </div>
+                    <div class="panel">
+                        <h3><span class="icon">🌊</span> Monthly Trends</h3>
+                        <div class="chart-container"><canvas id="monthlyLineChart"></canvas></div>
+                    </div>
+                    <!-- Re-added Monthly Distribution Chart -->
+                    <div class="panel">
+                        <h3><span class="icon">🌍</span> Monthly Distribution</h3>
+                        <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
+                        <div id="monthlyLegend" class="chart-legend"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Details & Metrics Tab -->
+            <div id="system-tab" class="tab-content">
+                <div class="system-details-grid">
+                    <div class="details-section">
+                        <h4>How Metrics Are Calculated</h4>
+                        <div class="math-equation">
+                            <div class="equation-title">Total Datasets Used</div>
+                            <div class="equation-explanation">
+                                This is the total count of unique datasets that have usage data within the selected
+                                time period.
+                            </div>
+                        </div>
+                        <div class="math-equation">
+                            <div class="equation-title">Rolling Average Sum</div>
+                            <div class="equation-explanation">
+                                We sum the rolling average values for each day in the selected period. This is not
+                                the total number of unique users.
+                            </div>
+                        </div>
+                        <div class="math-equation">
+                            <div class="equation-title">Mean Rolling Average</div>
+                            <div class="equation-explanation">
+                                Calculated by taking the "Rolling Average Sum" and dividing it by the number of days
+                                in the selected period.
+                            </div>
+                        </div>
+                        <div class="math-equation">
+                            <div class="equation-title">Period Trend Rate</div>
+                            <div class="equation-explanation">
+                                This shows the percentage change from the first day's rolling average to the last
+                                day's rolling average in the selected period.
+                            </div>
                         </div>
                     </div>
-
-                    <div>
-                        <label for="fileInput" class="block text-lg font-semibold text-slate-700">Upload Local
-                            File</label>
-                        <input type="file" id="fileInput" onchange="handleFileUpload(event)" accept=".xml,.eml"
-                            class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer">
+                    <div class="details-section">
+                        <h4>System Diagram</h4>
+                        <div class="info-box">
+                            <div class="info-title">Google Earth Engine</div>
+                            <p>Cloud-Based Geospatial Platform</p>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-title">GitHub Actions + Python Analytics</div>
+                            <p>Scheduled daily workflow that fetches GEE logs, processes analytics, and generates
+                                structured data (<code>object_stats.json</code>).</p>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-title">Interactive Dashboard</div>
+                            <p>This responsive dashboard, which fetches the live data and uses Chart.js to render
+                                all statistics.</p>
+                        </div>
+                    </div>
+                    <div class="details-section large-system-panel">
+                        <h4>Core Components & Key Metrics</h4>
+                        <ul>
+                            <li><strong>Data Source:</strong> Raw data originates from Google Earth Engine's usage
+                                logs, recording unique users for community datasets over a revolving 30-day window.
+                            </li>
+                            <li><strong>Automated Data Pipeline:</strong> A Python script (ee-usage-stats), run by a
+                                GitHub Action daily, fetches usage numbers and compiles the
+                                <code>object_stats.json</code> file.
+                            </li>
+                            <li><strong>Interactive Dashboard:</strong> This client-side application fetches the
+                                <code>object_stats.json</code> file and uses Chart.js to render interactive charts
+                                and statistics.
+                            </li>
+                            <li><strong>30-Day Revolving Window:</strong> User counts reflect unique individuals
+                                accessing an asset in the preceding 30 days, a standard GEE metric.</li>
+                            <li><strong>Peak Performance:</strong> The dashboard identifies the day with the highest
+                                number of total users for the selected time period.</li>
+                            <li><strong>Top Datasets:</strong> Datasets are ranked by their total rolling average
+                                users over the selected period.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-
-            <!-- Main Content -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Sidebar -->
-                <div class="lg:col-span-1 glass-card p-6 rounded-2xl shadow-md h-fit lg:sticky top-8">
-                    <h3 class="text-xl font-bold mb-4">Dataset Explorer</h3>
-                    <div id="datasetTree" class="space-y-1"></div>
-                </div>
-
-                <!-- Content Area -->
-                <div id="contentDisplay" class="lg:col-span-2 glass-card p-6 rounded-2xl shadow-md min-h-[600px]">
-                    <div class="flex items-center justify-center h-full">
-                        <p class="text-slate-500 text-lg">👆 Load an EML file to start exploring.</p>
-                    </div>
-                </div>
-            </div>
+            <div id="dashboardPeriodFooter"></div>
         </div>
     </div>
 
     <script>
-        let currentData = null;
+        let rawData = {};
+        let dailyChart, weeklyChart, monthlyLineChart, monthlyChart; // Added monthlyChart
+        let currentPeriodLabel = '';
 
-        // --- ICONS ---
-        const ICONS = {
-            dashboard: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>`,
-            database: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>`,
-            ruler: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L3 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0L15.3 9l.4.4"></path><path d="m18 2-2 2"></path><path d="m15 5-2 2"></path><path d="m12 8-2 2"></path><path d="m9 11-2 2"></path><path d="m6 14-2 2"></path><path d="m3 17-2 2"></path></svg>`,
-            flask: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 2v10.3a2 2 0 0 0 .5.5l4.5 3.5a2 2 0 0 1 1 1.7V20a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-1.5a2 2 0 0 1 1-1.7l4.5-3.5a2 2 0 0 0 .5-.5V2h4"></path></svg>`,
-            code: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>`,
-            chevron: `<svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`,
-            dollar: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`
+        const datasetMap = {
+            'projects/neon-prod-earthengine/assets/CHM/001': 'NEON Canopy Height Model',
+            'projects/neon-prod-earthengine/assets/DEM/001': 'NEON Digital Elevation Model (DEM)',
+            'projects/neon-prod-earthengine/assets/RGB/001': 'NEON RGB Camera Imagery',
+            'projects/neon-prod-earthengine/assets/HSI_REFL/002': 'NEON Surface Bidirectional Reflectance',
+            'projects/neon-prod-earthengine/assets/HSI_REFL/001': 'NEON Surface Directional Reflectance'
         };
 
-        // --- SI UNIT CONVERSION ---
-        const SI_UNITS = {
-            length: { name: 'meter', symbol: 'm' },
-            mass: { name: 'kilogram', symbol: 'kg' },
-            time: { name: 'second', symbol: 's' },
-            current: { name: 'ampere', symbol: 'A' },
-            temperature: { name: 'kelvin', symbol: 'K' },
-            amount: { name: 'mole', symbol: 'mol' },
-            luminosity: { name: 'candela', symbol: 'cd' },
-            angle: { name: 'radian', symbol: 'rad' },
-            dimensionless: { name: 'dimensionless', symbol: '' }
-        };
+        const DATA_URL = 'https://gist.githubusercontent.com/samapriya/4290b08cb4e810fd7437ca0a0dc8edae/raw/1cf79022ff3dbc95622f239ff487ca06ea43ae98/neon-stats.json';
 
-        function convertDimensionsToSI(dimensions) {
-            const superMap = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
-            const toSuper = (str) => str.split('').map(char => superMap[char] || char).join('');
-
-            const positiveDims = dimensions.filter(d => parseInt(d.power) > 0);
-            const negativeDims = dimensions.filter(d => parseInt(d.power) < 0);
-
-            let name = positiveDims.map(d => (d.power !== '1' ? `square ${SI_UNITS[d.name]?.name}` : SI_UNITS[d.name]?.name)).join(' ');
-            if (negativeDims.length > 0) {
-                name += ' per ' + negativeDims.map(d => (d.power !== '-1' ? `square ${SI_UNITS[d.name]?.name}` : SI_UNITS[d.name]?.name)).join(' ');
-            }
-
-            const symbolWithNegExp = dimensions
-                .map(d => (SI_UNITS[d.name]?.symbol || d.name) + (d.power !== '1' ? toSuper(d.power) : ''))
-                .join('·');
-
-            const numerator = positiveDims.map(d => (SI_UNITS[d.name]?.symbol || d.name) + (d.power !== '1' ? toSuper(d.power) : '')).join('·');
-            const denominator = negativeDims.map(d => (SI_UNITS[d.name]?.symbol || d.name) + (d.power !== '-1' ? toSuper(String(Math.abs(parseInt(d.power)))) : '')).join('·');
-            let symbolWithDiv = numerator || '';
-            if (denominator) {
-                if (!numerator && negativeDims.length === 1) {
-                    symbolWithDiv = `1/${denominator}`;
-                } else if (!numerator && negativeDims.length > 1) {
-                    symbolWithDiv = `1/(${denominator})`;
-                } else if (negativeDims.length > 1) {
-                    symbolWithDiv = `${numerator}/(${denominator})`;
-                } else {
-                    symbolWithDiv = `${numerator}/${denominator}`;
-                }
-            }
-
-            if (dimensions.length === 1 && dimensions[0].name === 'dimensionless') {
-                return { name: 'dimensionless', symbol: 'dimensionless', symbolWithNegExp: 'dimensionless' };
-            }
-
-            return { name: name.trim().replace(/\s+/g, ' '), symbol: symbolWithDiv, symbolWithNegExp };
-        }
-
-        // --- PARSING FUNCTIONS ---
-        function emlToStac(xmlDoc) {
-            const dataset = xmlDoc.querySelector('dataset');
-            if (!dataset) throw new Error('No <dataset> element found in the EML file.');
-
-            return {
-                type: "Feature",
-                stac_version: "1.0.0",
-                id: dataset.getAttribute('id') || 'unknown-id',
-                properties: {
-                    title: getTextContent(dataset, 'title'),
-                    description: getTextContent(dataset, 'shortName'),
-                    datetime: extractTemporalCoverage(dataset),
-                    platform: "NEON",
-                },
-                geometry: extractGeometry(dataset),
-                bbox: extractBbox(dataset),
-                assets: {},
-                links: Array.from(dataset.querySelectorAll('distribution online url')).map(url => ({
-                    href: url.textContent.trim(),
-                    rel: url.getAttribute('function') || 'related',
-                    type: 'text/html'
-                })),
-                collection: extractCollectionInfo(dataset),
-                neon_metadata: {
-                    site_info: extractSiteInfo(dataset),
-                    data_tables: extractDataTables(dataset),
-                    project_info: extractProjectInfo(dataset),
-                    quality_info: extractQualityInfo(dataset),
-                    units: extractUnits(xmlDoc)
-                }
-            };
-        }
-
-        function getTextContent(parent, selector) {
-            const element = parent.querySelector(selector);
-            return element ? element.textContent.trim() : null;
-        }
-
-        function extractUnits(xmlDoc) {
-            const unitList = xmlDoc.querySelector('unitList');
-            if (!unitList) return { units: {}, unitTypes: {} };
-            const units = {};
-            unitList.querySelectorAll('unit').forEach(u => {
-                units[u.getAttribute('id')] = {
-                    id: u.getAttribute('id'), name: u.getAttribute('name'), abbreviation: u.getAttribute('abbreviation'),
-                    unitType: u.getAttribute('unitType'), parentSI: u.getAttribute('parentSI'), multiplierToSI: u.getAttribute('multiplierToSI')
-                };
-            });
-            const unitTypes = {};
-            unitList.querySelectorAll('unitType').forEach(ut => {
-                const dimensions = Array.from(ut.querySelectorAll('dimension')).map(d => ({ name: d.getAttribute('name'), power: d.getAttribute('power') || '1' }));
-                unitTypes[ut.getAttribute('id')] = {
-                    id: ut.getAttribute('id'),
-                    name: ut.getAttribute('name'),
-                    dimensions: dimensions,
-                    si: convertDimensionsToSI(dimensions)
-                };
-            });
-            return { units, unitTypes };
-        }
-
-        function extractTemporalCoverage(dataset) {
-            const beginDate = getTextContent(dataset, 'beginDate calendarDate');
-            const endDate = getTextContent(dataset, 'endDate calendarDate');
-            if (!beginDate || !endDate) return null;
-            return { start: `${beginDate}T00:00:00Z`, end: `${endDate}T23:59:59Z` };
-        }
-
-        function extractGeometry(dataset) {
-            const coords = ['westBoundingCoordinate', 'eastBoundingCoordinate', 'northBoundingCoordinate', 'southBoundingCoordinate'].map(c => parseFloat(getTextContent(dataset, c)));
-            if (coords.some(isNaN)) return null;
-            return { type: "Point", coordinates: [(coords[0] + coords[1]) / 2, (coords[2] + coords[3]) / 2] };
-        }
-
-        function extractBbox(dataset) {
-            const coords = ['westBoundingCoordinate', 'southBoundingCoordinate', 'eastBoundingCoordinate', 'northBoundingCoordinate'].map(c => parseFloat(getTextContent(dataset, c)));
-            return coords.some(isNaN) ? null : coords;
-        }
-
-        function extractCollectionInfo(dataset) {
-            const id = dataset.getAttribute('id');
-            const domainId = id ? id.split('.')[1] : 'unknown';
-            const siteId = id ? id.split('.')[2] : 'unknown';
-            return {
-                id: `neon-${domainId}-${siteId}`, title: `NEON ${domainId} ${siteId} Collection`,
-                description: getTextContent(dataset, 'purpose') || 'NEON ecological data collection',
-            };
-        }
-
-        function extractSiteInfo(dataset) {
-            const id = dataset.getAttribute('id');
-            return {
-                geographic_description: getTextContent(dataset, 'geographicDescription'),
-                altitude: { min: parseFloat(getTextContent(dataset, 'altitudeMinimum')), max: parseFloat(getTextContent(dataset, 'altitudeMaximum')), units: getTextContent(dataset, 'altitudeUnits') },
-                domain: id ? id.split('.')[1] : null, site: id ? id.split('.')[2] : null
-            };
-        }
-
-        function extractDataTables(dataset) {
-            return Array.from(dataset.querySelectorAll('dataTable')).map(table => ({
-                entity_name: getTextContent(table, 'entityName'),
-                record_count: parseInt(getTextContent(table, 'numberOfRecords'), 10),
-                attributes: Array.from(table.querySelectorAll('attribute')).map(attr => ({
-                    name: getTextContent(attr, 'attributeName'), definition: getTextContent(attr, 'attributeDefinition'),
-                    measurement_scale: extractMeasurementScale(attr)
-                }))
-            }));
-        }
-
-        function extractMeasurementScale(attr) {
-            const scaleEl = attr.querySelector('measurementScale');
-            if (!scaleEl) return null;
-            const scaleType = scaleEl.children[0]?.tagName.toLowerCase();
-            const result = { type: scaleType };
-            if (scaleType === 'ratio' || scaleType === 'interval') {
-                result.unit = getTextContent(scaleEl, 'unit customUnit') || getTextContent(scaleEl, 'unit standardUnit');
-                result.precision = getTextContent(scaleEl, 'precision');
-                result.number_type = getTextContent(scaleEl, 'numberType');
-            } else if (scaleType === 'dateTime') {
-                result.format = getTextContent(scaleEl, 'formatString');
-            }
-            return result;
-        }
-
-        function extractProjectInfo(dataset) {
-            const project = dataset.querySelector('project');
-            if (!project) return null;
-            return {
-                title: getTextContent(project, 'title'),
-                abstract: getTextContent(project, 'abstract para'),
-                funding: getTextContent(project, 'funding para'),
-                awards: Array.from(project.querySelectorAll('award')).map(award => ({
-                    funder: getTextContent(award, 'funderName'), number: getTextContent(award, 'awardNumber'),
-                    title: getTextContent(award, 'title'), url: getTextContent(award, 'awardUrl')
-                }))
-            };
-        }
-
-        function extractQualityInfo(dataset) {
-            return {
-                maintenance_frequency: getTextContent(dataset, 'maintenance maintenanceUpdateFrequency'),
-                rights: getTextContent(dataset, 'intellectualRights para'),
-                publication_date: getTextContent(dataset, 'pubDate')
-            };
-        }
-
-        // --- CORE APP LOGIC ---
-        async function loadFromUrl() {
-            const url = document.getElementById('urlInput').value.trim();
-            if (!url) {
-                alert('Please enter a valid URL to load.');
-                return;
-            }
-            document.getElementById('fileInput').value = ''; // Clear file input
-            const contentDisplay = document.getElementById('contentDisplay');
-            contentDisplay.innerHTML = `<div class="text-center p-10 text-slate-500">Loading from URL...</div>`;
-
+        document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const xmlText = await response.text();
-                processEMLText(xmlText);
+                const response = await fetch(DATA_URL);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                rawData = await response.json();
+
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block';
+                init();
             } catch (error) {
-                contentDisplay.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
-                    <strong class="font-bold">Error:</strong> <span class="block sm:inline">${error.message}</span></div>`;
-                console.error('Error loading EML file from URL:', error);
+                console.error("Failed to fetch or process data:", error);
+                document.getElementById('loadingMessage').innerHTML = `<p style="color: var(--danger-red);">Error: Could not load analytics data.</p><p style="font-size: 1rem; color: var(--text-muted)">${error.message}</p>`;
             }
-        }
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            document.getElementById('urlInput').value = ''; // Clear URL input
-            const contentDisplay = document.getElementById('contentDisplay');
-            contentDisplay.innerHTML = `<div class="text-center p-10 text-slate-500">Reading file...</div>`;
-
-            const reader = new FileReader();
-            reader.onload = (e) => processEMLText(e.target.result);
-            reader.onerror = (e) => {
-                console.error("File could not be read:", e.target.error);
-                contentDisplay.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
-                    <strong class="font-bold">Error:</strong> <span class="block sm:inline">Could not read the selected file.</span></div>`;
-            };
-            reader.readAsText(file);
-        }
-
-        function processEMLText(xmlText) {
-            const contentDisplay = document.getElementById('contentDisplay');
-            contentDisplay.innerHTML = `<div class="text-center p-10 text-slate-500">Processing EML data...</div>`;
-
-            setTimeout(() => {
-                try {
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-                    const parseError = xmlDoc.querySelector("parsererror");
-                    if (parseError) {
-                        console.error("XML Parsing Error:", parseError.textContent);
-                        throw new Error("XML parsing error. Please check if the file is a valid XML/EML document.");
-                    }
-
-                    currentData = emlToStac(xmlDoc);
-                    buildNavigationTree();
-                    showOverview();
-                } catch (error) {
-                    contentDisplay.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
-                        <strong class="font-bold">Error:</strong> <span class="block sm:inline">${error.message}</span></div>`;
-                    console.error('Error processing EML text:', error);
-                }
-            }, 10);
-        }
-
-
-        // --- UI & NAVIGATION ---
-        function buildNavigationTree() {
-            const tree = document.getElementById('datasetTree');
-            tree.innerHTML = '';
-
-            const createNode = (icon, title, children) => {
-                const isParent = children && children.length > 0;
-                return `
-                    <div class="py-1">
-                        <div class="flex items-center justify-between p-2 rounded-lg cursor-pointer hover:bg-sky-100 transition-colors ${isParent ? 'font-semibold' : ''}"
-                             onclick="${isParent ? 'toggleNode(this)' : children[0].onclick}">
-                            <div class="flex items-center">${icon}<span>${title}</span></div>
-                            ${isParent ? ICONS.chevron : ''}
-                        </div>
-                        ${isParent ? `<div class="pl-6 mt-1 space-y-1 hidden">${children.map(c => c.html).join('')}</div>` : ''}
-                    </div>`;
-            };
-
-            const createChild = (title, onClick) => ({
-                html: `<div class="flex items-center p-2 rounded-lg cursor-pointer hover:bg-slate-200" onclick="${onClick}">${title}</div>`,
-                onclick
-            });
-
-            tree.innerHTML = [
-                createNode(ICONS.dashboard, 'Dataset Overview', [createChild('Summary', 'showOverview()')]),
-                createNode(ICONS.database, 'Data Tables', currentData.neon_metadata.data_tables.map((table, i) => createChild(table.entity_name.split('.').pop(), `showDataTable(${i})`))),
-                createNode(ICONS.ruler, 'Unit Definitions', [createChild('View Units', 'showUnits()')]),
-                createNode(ICONS.flask, 'Project Info', [createChild('Details', 'showProject()'), createChild('Funding & Awards', 'showFunding()')]),
-                createNode(ICONS.code, 'STAC JSON', [createChild('View Full JSON', 'showSTACView()')])
-            ].join('');
-        }
-
-        function toggleNode(element) {
-            const childrenContainer = element.nextElementSibling;
-            const icon = element.querySelector('svg:last-child');
-            childrenContainer.classList.toggle('hidden');
-            icon.classList.toggle('rotate-180');
-        }
-
-        // --- CONTENT RENDERERS ---
-        function renderCard(title, content) {
-            document.getElementById('contentDisplay').innerHTML = `
-                <div class="bg-white p-6 rounded-xl shadow-sm animate-fade-in">
-                    <h2 class="text-2xl font-bold text-sky-800 mb-6 flex items-center">${title}</h2>
-                    ${content}
-                </div>
-                <style> @keyframes fade-in { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in { animation: fade-in 0.3s ease-out; } </style>
-                `;
-        }
-
-        function showOverview() {
-            const { properties, id, neon_metadata } = currentData;
-            const content = `<div class="space-y-4">
-                    <p class="text-lg">${properties.description || 'No description available.'}</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                        <div class="bg-slate-50 p-4 rounded-lg"><strong class="text-slate-600">ID:</strong> ${id}</div>
-                        <div class="bg-slate-50 p-4 rounded-lg"><strong class="text-slate-600">Platform:</strong> ${properties.platform}</div>
-                        <div class="bg-slate-50 p-4 rounded-lg"><strong class="text-slate-600">Domain:</strong> ${neon_metadata.site_info.domain || 'N/A'}</div>
-                        <div class="bg-slate-50 p-4 rounded-lg"><strong class="text-slate-600">Site:</strong> ${neon_metadata.site_info.site || 'N/A'}</div>
-                        <div class="bg-slate-50 p-4 rounded-lg"><strong class="text-slate-600">Data Tables:</strong> ${neon_metadata.data_tables.length}</div>
-                        <div class="bg-slate-50 p-4 rounded-lg"><strong class="text-slate-600">Total Records:</strong> ${neon_metadata.data_tables.reduce((s, t) => s + (t.record_count || 0), 0)}</div>
-                    </div></div>`;
-            renderCard(`${ICONS.dashboard} ${properties.title}`, content);
-        }
-
-        function showDataTable(index) {
-            const table = currentData.neon_metadata.data_tables[index];
-            const content = `<div class="mb-6 space-y-2">
-                    <p><strong class="text-slate-600">Entity Name:</strong> ${table.entity_name}</p>
-                    <p><strong class="text-slate-600">Record Count:</strong> ${table.record_count || 'Unknown'}</p>
-                </div>
-                <h3 class="text-xl font-bold text-sky-700 mb-4">Attributes</h3>
-                <div class="space-y-4">${table.attributes.map(attr => `
-                    <div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
-                        <p class="font-semibold text-slate-800">${attr.name}</p>
-                        <p class="text-slate-600 mt-1">${attr.definition || 'No definition.'}</p>
-                        ${attr.measurement_scale ? `<div class="mt-2 text-sm space-x-4">
-                                <span class="inline-block bg-sky-100 text-sky-800 px-2 py-1 rounded">Type: ${attr.measurement_scale.type}</span>
-                                ${attr.measurement_scale.unit ? `<span class="inline-block bg-green-100 text-green-800 px-2 py-1 rounded">Unit: ${attr.measurement_scale.unit}</span>` : ''}
-                            </div>` : ''}
-                    </div>`).join('')}</div>`;
-            renderCard(`${ICONS.database} ${table.entity_name.split('.').pop()}`, content);
-        }
-
-        function showUnits() {
-            const { units, unitTypes } = currentData.neon_metadata.units;
-            const unitsContent = Object.values(units).map(u => `<div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
-                    <p class="font-semibold text-slate-800">${u.name} (${u.abbreviation || u.id})</p>
-                    <div class="mt-2 text-sm space-x-4">
-                        <span class="inline-block bg-sky-100 text-sky-800 px-2 py-1 rounded">Type: ${u.unitType}</span>
-                        ${u.parentSI ? `<span class="inline-block bg-slate-200 px-2 py-1 rounded">Parent SI: ${u.parentSI}</span>` : ''}
-                        ${u.multiplierToSI ? `<span class="inline-block bg-slate-200 px-2 py-1 rounded">Multiplier: ${u.multiplierToSI}</span>` : ''}
-                    </div></div>`).join('');
-            const unitTypesContent = Object.values(unitTypes).map(ut => `<div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
-                    <p class="font-semibold text-slate-800">${ut.name} (<code>${ut.id}</code>)</p>
-                    <p class="mt-1 text-slate-600">Dimensions: ${ut.dimensions.map(d => `${d.name}<sup>${d.power}</sup>`).join(' &middot; ')}</p>
-                    <div class="mt-2 p-3 bg-sky-50 rounded-md">
-                        <p><strong class="text-sky-800">SI Unit:</strong> ${ut.si.name}</p>
-                        <p><strong class="text-sky-800">SI Symbol:</strong> <code>${ut.si.symbol}</code> or <code>${ut.si.symbolWithNegExp}</code></p>
-                    </div>
-                </div>`).join('');
-            const content = `<h3 class="text-xl font-bold text-sky-700 mb-4">Units</h3><div class="space-y-4 mb-8">${unitsContent}</div>
-                <h3 class="text-xl font-bold text-sky-700 mb-4">Unit Types</h3><div class="space-y-4">${unitTypesContent}</div>`;
-            renderCard(`${ICONS.ruler} Unit Definitions`, content);
-        }
-
-        function showProject() {
-            const { project_info } = currentData.neon_metadata;
-            const content = `<div class="space-y-4">
-                    <div><h4 class="font-semibold text-slate-700">Abstract</h4><p class="text-slate-600">${project_info.abstract || 'N/A'}</p></div>
-                    <div><h4 class="font-semibold text-slate-700">Funding</h4><p class="text-slate-600">${project_info.funding || 'N/A'}</p></div>
-                </div>`;
-            renderCard(`${ICONS.flask} ${project_info.title}`, content);
-        }
-
-        function showFunding() {
-            const { awards } = currentData.neon_metadata.project_info;
-            if (!awards || awards.length === 0) {
-                renderCard(`${ICONS.dollar} Funding & Awards`, '<p>No detailed award information available.</p>');
-                return;
-            }
-            const content = `<div class="space-y-4">${awards.map(award => `
-                <div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
-                    <p class="font-semibold text-slate-800">${award.title}</p>
-                    <p class="text-slate-600 mt-1">Award #${award.number}</p>
-                    <div class="mt-2 text-sm space-y-1">
-                        <p><strong class="text-slate-600">Funder:</strong> ${award.funder}</p>
-                        ${award.url ? `<p><strong class="text-slate-600">Link:</strong> <a href="${award.url}" target="_blank" class="text-sky-600 hover:underline">View Award Details</a></p>` : ''}
-                    </div></div>`).join('')}</div>`;
-            renderCard(`${ICONS.dollar} Funding & Awards`, content);
-        }
-
-        function showSTACView() {
-            const content = `<p class="mb-4 text-slate-600">This is the EML data converted to a STAC-like JSON structure.</p>
-                <pre class="bg-slate-800 text-slate-200 p-4 rounded-lg text-sm overflow-auto max-h-[500px]"><code>${JSON.stringify(currentData, null, 2)}</code></pre>
-                <div class="mt-4 flex items-center space-x-4">
-                    <button class="px-4 py-2 bg-sky-600 text-white font-semibold rounded-lg hover:bg-sky-700" onclick="copyToClipboard()">Copy JSON</button>
-                    <button class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700" onclick="downloadJSON()">Download JSON</button>
-                </div>`;
-            renderCard(`${ICONS.code} STAC JSON Representation`, content);
-        }
-
-        // --- UTILITY FUNCTIONS ---
-        function copyToClipboard() {
-            navigator.clipboard.writeText(JSON.stringify(currentData, null, 2)).then(() => {
-                alert('STAC JSON copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy JSON:', err);
-                alert('Failed to copy JSON. See console for details.');
-            });
-        }
+        });
 
         function downloadJSON() {
-            const jsonString = JSON.stringify(currentData, null, 2);
-            const blob = new Blob([jsonString], { type: 'application/json' });
+            if (!rawData || Object.keys(rawData).length === 0) {
+                alert("No data available to download.");
+                return;
+            }
+            const dataStr = JSON.stringify(rawData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${currentData.id || 'eml-data'}.json`;
-            document.body.appendChild(a);
+            a.download = 'gee-asset-analytics-data.json';
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
-        // Auto-load the sample URL on page load
-        window.addEventListener('load', loadFromUrl);
+        function init() {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded!');
+                return;
+            }
+            initCharts();
+
+            const dailyData = rawData.moving_window_snapshots || rawData.daily_data || {};
+            const allDates = Object.keys(dailyData).sort();
+            if (allDates.length === 0) return;
+
+            const latestDate = allDates[allDates.length - 1];
+            const defaultStartDate = new Date(latestDate);
+            defaultStartDate.setDate(defaultStartDate.getDate() - 89);
+
+            document.getElementById('endDate').value = latestDate;
+            document.getElementById('startDate').value = defaultStartDate.toISOString().split('T')[0];
+            currentPeriodLabel = 'for the last 90-day period';
+
+            const updateFunc = () => {
+                const start = new Date(document.getElementById('startDate').value);
+                const end = new Date(document.getElementById('endDate').value);
+                const diffDays = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1;
+                currentPeriodLabel = `for the selected ${diffDays}-day period`;
+                updateDashboard();
+            };
+            document.getElementById('startDate').addEventListener('change', updateFunc);
+            document.getElementById('endDate').addEventListener('change', updateFunc);
+            updateDashboard();
+        }
+
+        function setDateRange(days) {
+            currentPeriodLabel = days === 1 ? 'for the latest day' : `for the selected ${days}-day period`;
+            const dailyData = rawData.moving_window_snapshots || rawData.daily_data || {};
+            const allDates = Object.keys(dailyData).sort((a, b) => new Date(a) - new Date(b));
+            const latestDateStr = allDates[allDates.length - 1];
+            const endDate = new Date(latestDateStr + 'T00:00:00');
+            let startDate = new Date(endDate);
+            startDate.setDate(endDate.getDate() - (days - 1));
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            const startDate = new Date(document.getElementById('startDate').value + 'T00:00:00');
+            const endDate = new Date(document.getElementById('endDate').value + 'T23:59:59');
+            const { filteredData, datasets } = processRawData(startDate, endDate);
+            if (Object.keys(filteredData).length === 0) return;
+            const stats = computeStatistics(filteredData, datasets);
+            updateHeroStats(stats);
+            updateSummaryStats(stats);
+            updatePeakStats(stats, filteredData);
+            updateDatasetList(startDate, endDate);
+            updateCharts(stats);
+            updateFooter();
+        }
+
+        function processRawData(startDate, endDate) {
+            const filteredData = {};
+            const datasets = new Set();
+            const dailyData = rawData.moving_window_snapshots || rawData.daily_data || {};
+            for (const [dateStr, dayData] of Object.entries(dailyData)) {
+                const date = new Date(dateStr + 'T00:00:00');
+                if (date >= startDate && date <= endDate) {
+                    filteredData[dateStr] = dayData;
+                    Object.keys(dayData).forEach(dataset => datasets.add(dataset));
+                }
+            }
+            return { filteredData, datasets: Array.from(datasets) };
+        }
+
+        function computeStatistics(filteredData, datasets) {
+            const dailyTotals = {};
+            for (const [dateStr, dayData] of Object.entries(filteredData)) {
+                dailyTotals[dateStr] = { total_users: Object.values(dayData).reduce((sum, users) => sum + users, 0) };
+            }
+            const totalUsers = Object.values(dailyTotals).reduce((sum, day) => sum + day.total_users, 0);
+            const sortedDates = Object.keys(dailyTotals).sort();
+            let growthRate = 0;
+            if (sortedDates.length > 1) {
+                const firstDay = dailyTotals[sortedDates[0]].total_users;
+                const lastDay = dailyTotals[sortedDates[sortedDates.length - 1]].total_users;
+                if (firstDay > 0) growthRate = ((lastDay - firstDay) / firstDay) * 100;
+            }
+            let peakDay = null, maxUsers = -1;
+            for (const [dateStr, dayData] of Object.entries(dailyTotals)) {
+                if (dayData.total_users > maxUsers) {
+                    maxUsers = dayData.total_users;
+                    peakDay = { date: dateStr, total_users: dayData.total_users };
+                }
+            }
+            return {
+                summary: { total_datasets: datasets.length, total_users: totalUsers, growth_rate: growthRate },
+                peaks: { peak_day: peakDay },
+                daily_trends: dailyTotals,
+            };
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toLocaleString();
+        }
+
+        function updateHeroStats(stats) {
+            const sortedDates = Object.keys(stats.daily_trends).sort();
+            const currentAvg = sortedDates.length > 0 ? stats.daily_trends[sortedDates[sortedDates.length - 1]].total_users : 0;
+            document.getElementById('heroCurrentAvg').textContent = formatNumber(currentAvg);
+            document.getElementById('heroTotalDatasets').textContent = stats.summary.total_datasets.toLocaleString();
+            const growthRateEl = document.getElementById('heroGrowthRate');
+            const growthRate = stats.summary.growth_rate;
+            growthRateEl.textContent = `${growthRate.toFixed(1)}%`;
+            growthRateEl.style.color = growthRate >= 0 ? '#22c55e' : 'var(--danger-red)';
+        }
+
+        function updateSummaryStats(stats) {
+            const avgUsersPerDay = stats.summary.total_users / Object.keys(stats.daily_trends).length;
+            const growthRate = stats.summary.growth_rate;
+            document.getElementById('summaryStats').innerHTML = `
+                <div class="metric tooltip" data-tooltip="Total count of unique datasets with usage in the selected period."><span class="metric-label">Total Datasets Used</span><span class="metric-value">${stats.summary.total_datasets.toLocaleString()}</span></div>
+                <div class="metric tooltip" data-tooltip="Sum of all rolling averages per day. Not unique users."><span class="metric-label">Rolling Avg Sum</span><span class="metric-value">${stats.summary.total_users.toLocaleString()}</span></div>
+                <div class="metric"><span class="metric-label">Mean Rolling Average</span><span class="metric-value">${formatNumber(Math.round(avgUsersPerDay))}</span></div>
+                <div class="metric"><span class="metric-label">Period Trend Rate</span><span class="metric-value" style="color: ${growthRate >= 0 ? '#22c55e' : 'var(--danger-red)'}">${growthRate.toFixed(1)}%</span></div>
+            `;
+        }
+
+        function updatePeakStats(stats, filteredData) {
+            const datasetTotals = {};
+            for (const dayData of Object.values(filteredData)) {
+                for (const [dataset, users] of Object.entries(dayData)) {
+                    datasetTotals[dataset] = (datasetTotals[dataset] || 0) + users;
+                }
+            }
+            const sorted = Object.entries(datasetTotals).sort((a, b) => b[1] - a[1]);
+            const topDataset = sorted.length > 0 ? { name: sorted[0][0], total_users: sorted[0][1] } : { name: 'N/A', total_users: 0 };
+            const topDatasetName = topDataset.name ? (datasetMap[topDataset.name] || topDataset.name.split('/').pop()) : 'N/A';
+            document.getElementById('peakStats').innerHTML = `
+                <div class="metric"><span class="metric-label">Peak Day</span><span class="peak-metric-value">${stats.peaks.peak_day ? stats.peaks.peak_day.date : '-'}</span></div>
+                <div class="metric"><span class="metric-label">Peak Rolling Avg</span><span class="peak-metric-value">${stats.peaks.peak_day ? formatNumber(stats.peaks.peak_day.total_users) : '-'}</span></div>
+                <div class="metric"><span class="metric-label">Top Dataset</span><span class="peak-metric-value" title="${topDataset.name}">${topDatasetName}</span></div>
+            `;
+        }
+
+        function updateDatasetList(currentStartDate, currentEndDate) {
+            const diffDays = Math.ceil((currentEndDate - currentStartDate) / (1000 * 3600 * 24));
+            const prevEndDate = new Date(currentStartDate - 1);
+            const prevStartDate = new Date(prevEndDate.getTime() - (diffDays * 1000 * 3600 * 24));
+            const currentPeriodTotals = {}, previousPeriodTotals = {};
+            const dailyData = rawData.moving_window_snapshots || rawData.daily_data || {};
+            for (const [dateStr, dayData] of Object.entries(dailyData)) {
+                const date = new Date(dateStr + 'T00:00:00');
+                if (date >= currentStartDate && date <= currentEndDate) {
+                    for (const [dataset, users] of Object.entries(dayData)) currentPeriodTotals[dataset] = (currentPeriodTotals[dataset] || 0) + users;
+                } else if (date >= prevStartDate && date <= prevEndDate) {
+                    for (const [dataset, users] of Object.entries(dayData)) previousPeriodTotals[dataset] = (previousPeriodTotals[dataset] || 0) + users;
+                }
+            }
+            const sortedDatasets = Object.entries(currentPeriodTotals).sort((a, b) => b[1] - a[1]);
+            const datasetList = document.getElementById('datasetList');
+            datasetList.innerHTML = '';
+            sortedDatasets.slice(0, 5).forEach(([name, total_users], index) => {
+                const prevUsers = previousPeriodTotals[name] || 0;
+                let growth = prevUsers > 0 ? ((total_users - prevUsers) / prevUsers) * 100 : (total_users > 0 ? 100 : 0);
+                let growthText = `${growth > 0 ? '+' : ''}${growth.toFixed(0)}%`;
+                let growthColor = growth > 0 ? '#22c55e' : (growth < 0 ? 'var(--danger-red)' : 'var(--text-muted)');
+                const displayName = datasetMap[name] || name.split('/').pop();
+                datasetList.innerHTML += `
+                    <div class="dataset-item">
+                        <div class="dataset-info">
+                            <span class="dataset-rank">#${index + 1}</span>
+                            <div class="dataset-details">
+                                <span class="dataset-name" title="${name}">${displayName}</span>
+                                <span class="dataset-users">${formatNumber(total_users)} avg users</span>
+                            </div>
+                        </div>
+                        <span class="dataset-growth" style="background-color: ${growthColor}20; color: ${growthColor};">${growthText}</span>
+                    </div>`;
+            });
+        }
+
+        function updateCharts(stats) {
+            const sortedDates = Object.keys(stats.daily_trends).sort();
+            const datasets = new Set();
+            const dailyData = rawData.moving_window_snapshots || rawData.daily_data || {};
+            for (const dateStr of sortedDates) {
+                Object.keys(dailyData[dateStr]).forEach(dataset => datasets.add(dataset));
+            }
+            const totalData = sortedDates.map(date => ({ x: date, y: stats.daily_trends[date].total_users }));
+
+            const chartDatasets = [{
+                label: 'Total Users (30-Day Avg)',
+                data: totalData,
+                borderColor: initCharts.chartColors.pine,
+                backgroundColor: 'rgba(45, 58, 31, 0.2)',
+                fill: true, tension: 0.4, borderWidth: 3
+            }];
+
+            const datasetColors = [initCharts.chartColors.rust, initCharts.chartColors.slate];
+            Array.from(datasets).slice(0, 2).forEach((dataset, index) => {
+                const datasetData = sortedDates.map(date => ({ x: date, y: (dailyData[date] || {})[dataset] || 0 }));
+                chartDatasets.push({
+                    label: datasetMap[dataset] || dataset.split('/').pop(),
+                    data: datasetData,
+                    borderColor: datasetColors[index],
+                    backgroundColor: `${datasetColors[index]}33`,
+                    fill: false, tension: 0.4, borderWidth: 2
+                });
+            });
+            dailyChart.data.datasets = chartDatasets;
+            dailyChart.update();
+
+            const weeklyData = {};
+            for (const [dateStr, dayData] of Object.entries(stats.daily_trends)) {
+                const date = new Date(dateStr);
+                const weekLabel = `${date.getFullYear()}-W${Math.ceil((((new Date(date.getFullYear(), date.getMonth(), date.getDate()) - new Date(date.getFullYear(), 0, 1)) / 86400000) + 1) / 7)}`;
+                weeklyData[weekLabel] = (weeklyData[weekLabel] || 0) + dayData.total_users;
+            }
+            const sortedWeekly = Object.entries(weeklyData).sort((a, b) => a[0].localeCompare(b[0]));
+            weeklyChart.data.labels = sortedWeekly.map(d => d[0]);
+            weeklyChart.data.datasets[0].data = sortedWeekly.map(d => d[1]);
+            weeklyChart.update();
+
+            const monthlyData = {};
+            for (const [dateStr, dayData] of Object.entries(stats.daily_trends)) {
+                const date = new Date(dateStr);
+                const monthLabel = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                monthlyData[monthLabel] = (monthlyData[monthLabel] || { total: 0, count: 0 });
+                monthlyData[monthLabel].total += dayData.total_users;
+                monthlyData[monthLabel].count++;
+            }
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const sortedMonthly = Object.entries(monthlyData).sort((a, b) => a[0].localeCompare(b[0]));
+            const monthlyLabels = sortedMonthly.map(([label]) => `${monthNames[parseInt(label.split('-')[1]) - 1]} ${label.split('-')[0]}`);
+
+            monthlyLineChart.data.labels = monthlyLabels;
+            monthlyLineChart.data.datasets[0].data = sortedMonthly.map(d => d[1].total);
+            monthlyLineChart.data.datasets[1].data = sortedMonthly.map(d => d[1].total / d[1].count);
+            monthlyLineChart.update();
+
+            // Update monthly distribution chart
+            const monthColors = ['#4a5d2f', '#7ba05b', '#d4af37', '#c7a875', '#8a795d', '#a99985'];
+            const backgroundColors = sortedMonthly.map((_, index) => monthColors[index % monthColors.length]);
+
+            monthlyChart.data.labels = monthlyLabels;
+            monthlyChart.data.datasets[0].data = sortedMonthly.map(d => d[1].total);
+            monthlyChart.data.datasets[0].backgroundColor = backgroundColors;
+            monthlyChart.update();
+            generateCustomLegend(monthlyChart, 'monthlyLegend');
+        }
+
+        function generateCustomLegend(chart, containerId) {
+            const legendContainer = document.getElementById(containerId);
+            legendContainer.innerHTML = '';
+            const labels = chart.data.labels;
+            const colors = chart.data.datasets[0].backgroundColor;
+            labels.forEach((label, index) => {
+                const item = document.createElement('div');
+                item.className = 'legend-item';
+                item.innerHTML = `<span class="legend-color-box" style="background-color: ${colors[index]};"></span><span>${label}</span>`;
+                legendContainer.appendChild(item);
+            });
+        }
+
+        function updateFooter() {
+            document.getElementById('dashboardPeriodFooter').textContent = `Dashboard showing 30-day rolling average analytics ${currentPeriodLabel}`;
+        }
+
+        function initCharts() {
+            const chartColors = {
+                grid: 'rgba(74, 93, 47, 0.1)',
+                text: 'var(--text-secondary)',
+                pine: '#2d3a1f',
+                rust: '#c97b5f',
+                slate: '#6a7a8c',
+                meadow: 'var(--golden-meadow)'
+            };
+            initCharts.chartColors = chartColors;
+
+            const defaultOptions = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: true, labels: { color: chartColors.text, font: { size: 12 }, usePointStyle: true } } },
+                scales: {
+                    x: { ticks: { color: chartColors.text, font: { size: 12 } }, grid: { color: chartColors.grid, drawOnChartArea: false } },
+                    y: { ticks: { color: chartColors.text, font: { size: 12 } }, grid: { color: chartColors.grid } }
+                }
+            };
+            dailyChart = new Chart('dailyChart', { type: 'line', data: { datasets: [] }, options: defaultOptions });
+            weeklyChart = new Chart('weeklyChart', {
+                type: 'bar',
+                data: { datasets: [{ label: 'Weekly Rolling Avg Sum', backgroundColor: 'rgba(123, 160, 91, 0.6)', borderColor: chartColors.meadow, borderWidth: 2, borderRadius: 4 }] },
+                options: defaultOptions
+            });
+            monthlyLineChart = new Chart('monthlyLineChart', {
+                type: 'line',
+                data: {
+                    labels: [], datasets: [
+                        { label: 'Total Rolling Avg', borderColor: chartColors.pine, tension: 0.4, yAxisID: 'y' },
+                        { label: 'Average Rolling Avg', borderColor: chartColors.rust, tension: 0.4, yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    ...defaultOptions, scales: {
+                        x: defaultOptions.scales.x,
+                        y: { ...defaultOptions.scales.y, position: 'left', title: { display: true, text: 'Total Rolling Avg', color: chartColors.text } },
+                        y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: chartColors.text }, title: { display: true, text: 'Average Rolling Avg', color: chartColors.text } }
+                    }
+                }
+            });
+            // Init for monthly distribution chart
+            monthlyChart = new Chart('monthlyChart', {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [],
+                        borderColor: 'var(--bg-card-subtle)',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelector(`button[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
     </script>
 </body>
 
