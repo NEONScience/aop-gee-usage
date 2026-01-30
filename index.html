@@ -1000,6 +1000,15 @@
             'projects/neon-prod-earthengine/assets/HSI_REFL/001': 'NEON Surface Directional Reflectance'
         };
 
+        // Shorter labels for chart legends
+        const chartLabelMap = {
+            'projects/neon-prod-earthengine/assets/RGB/001': 'RGB Camera',
+            'projects/neon-prod-earthengine/assets/CHM/001': 'CHM Lidar',
+            'projects/neon-prod-earthengine/assets/DEM/001': 'DEM Lidar',
+            'projects/neon-prod-earthengine/assets/HSI_REFL/001': 'Directional Reflectance',
+            'projects/neon-prod-earthengine/assets/HSI_REFL/002': 'Bidirectional Reflectance'
+        };
+
         const DATA_URL = 'catalog_stats.json';
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -1244,14 +1253,21 @@
                 fill: true, tension: 0.4, borderWidth: 3
             }];
 
-            const datasetColors = [initCharts.chartColors.rust, initCharts.chartColors.slate];
-            Array.from(datasets).slice(0, 2).forEach((dataset, index) => {
+            const datasetColors = [
+                initCharts.chartColors.rust,
+                initCharts.chartColors.slate,
+                '#e67e22',  // Orange
+                '#9b59b6',  // Purple
+                '#3498db'   // Blue
+            ];
+            Array.from(datasets).forEach((dataset, index) => {
                 const datasetData = sortedDates.map(date => ({ x: date, y: (dailyData[date] || {})[dataset] || 0 }));
+                const colorIndex = index % datasetColors.length;
                 chartDatasets.push({
-                    label: datasetMap[dataset] || dataset.split('/').pop(),
+                    label: chartLabelMap[dataset] || datasetMap[dataset] || dataset.split('/').pop(),
                     data: datasetData,
-                    borderColor: datasetColors[index],
-                    backgroundColor: `${datasetColors[index]}33`,
+                    borderColor: datasetColors[colorIndex],
+                    backgroundColor: `${datasetColors[colorIndex]}33`,
                     fill: false, tension: 0.4, borderWidth: 2
                 });
             });
