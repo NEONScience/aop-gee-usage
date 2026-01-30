@@ -119,7 +119,7 @@ class EarthEngineStatsProcessor:
         """
         self.bucket_name = "earthengine-stats"
         self.base_path = "providers/neon"
-        self.start_date = date(2025, 1, 21)
+        self.start_date = date(2024, 9, 6) # Start date for moving window snapshots, first neon stats file was generated on 2024-09-06  
         self.moving_window_data = {}  # Store data by date
         self.processed_stats = {}
         self.stac_catalog = STACCatalog(stac_catalog_url)
@@ -127,7 +127,7 @@ class EarthEngineStatsProcessor:
     def _generate_date_range(self, end_date: Optional[date] = None) -> List[date]:
         """Generate list of dates for moving window snapshots."""
         if end_date is None:
-            end_date = date.today() - timedelta(days=1)
+            end_date = date.today() - timedelta(days=2)
         return [self.start_date + timedelta(days=x) for x in range((end_date - self.start_date).days + 1)]
 
     def _extract_dataset_id_from_name(self, dataset_name: str) -> str:
@@ -152,7 +152,10 @@ class EarthEngineStatsProcessor:
             )
 
             if result.returncode != 0:
-                if "No such object" in result.stderr or "Not Found" in result.stderr:
+                if ("No such object" in result.stderr or 
+                    "Not Found" in result.stderr or 
+                    "may not exist" in result.stderr or
+                    "HTTPError 403" in result.stderr):
                     logger.debug(f"File not found: {gs_path}")
                 else:
                     logger.warning(f"Failed to download {gs_path}: {result.stderr}")
@@ -183,7 +186,7 @@ class EarthEngineStatsProcessor:
             logger.error("Failed to fetch STAC catalog. Continuing with empty catalog.")
 
         dates = self._generate_date_range(end_date)
-        logger.info(f"Collecting data for {len(dates)} dates from {dates[0]} to {dates[-1]}")
+        logger.info(f"Collecting data for {len(dates)} dates from {dates[0]} to {dates[-2]}")
 
         def download_and_process(target_date: date) -> tuple:
             """Download and process a single date."""
