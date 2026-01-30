@@ -1008,6 +1008,20 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 rawData = await response.json();
 
+                // Transform the data structure if needed
+                if (Array.isArray(rawData.moving_window_snapshots)) {
+                    const transformedData = {};
+                    rawData.moving_window_snapshots.forEach(snapshot => {
+                        const dateKey = snapshot.date;
+                        transformedData[dateKey] = {};
+                        // Extract dataset IDs and user counts from the datasets object
+                        Object.entries(snapshot.datasets || {}).forEach(([datasetId, datasetInfo]) => {
+                            transformedData[dateKey][datasetId] = datasetInfo.users;
+                        });
+                    });
+                    rawData.moving_window_snapshots = transformedData;
+                }
+
                 document.getElementById('loadingMessage').style.display = 'none';
                 document.getElementById('dashboardContent').style.display = 'block';
                 init();
