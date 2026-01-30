@@ -165,7 +165,7 @@ class EarthEngineStatsProcessor:
                 logger.debug(f"Empty CSV file: {filename}")
                 return None
 
-            required_columns = ['dataset_name', 'unique_users']
+            required_columns = ['Dataset', '30-day active users']
             if not all(col in df.columns for col in required_columns):
                 logger.warning(f"Missing required columns in {filename}: {df.columns.tolist()}")
                 return None
@@ -234,8 +234,8 @@ class EarthEngineStatsProcessor:
             catalog_datasets = {}
 
             for _, row in df.iterrows():
-                dataset_name = row['dataset_name']
-                users = int(row['unique_users'])
+                dataset_name = row['Dataset']
+                users = int(row['30-day active users'])
                 dataset_id = self._extract_dataset_id_from_name(dataset_name)
 
                 total_users += users

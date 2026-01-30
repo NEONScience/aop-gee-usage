@@ -20,19 +20,15 @@ jobs:
         with:
           python-version: "3.11"
           
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+          
       - name: Setup Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v2
         with:
           version: 'latest'
-          
-      - name: Create service account key file
-        run: |
-          echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > /tmp/gcp-key.json
-          
-      - name: Authenticate to Google Cloud
-        run: |
-          gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
-          gcloud config set project $(cat /tmp/gcp-key.json | jq -r '.project_id')
           
       - name: Install Python dependencies
         run: |
@@ -71,8 +67,3 @@ jobs:
           git add catalog_stats.json
           git commit -m "Updated Earth Engine moving window stats with STAC catalog integration ${today}" -a
           git push
-          
-      - name: Cleanup
-        if: always()
-        run: |
-          rm -f /tmp/gcp-key.json
