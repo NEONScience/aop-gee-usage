@@ -118,7 +118,7 @@ class EarthEngineStatsProcessor:
             stac_catalog_url: URL to the STAC catalog JSON
         """
         self.bucket_name = "earthengine-stats"
-        self.base_path = "providers/neon-prod-earthengine"
+        self.base_path = "providers/neon"
         self.start_date = date(2025, 1, 21)
         self.moving_window_data = {}  # Store data by date
         self.processed_stats = {}
