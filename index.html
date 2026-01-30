@@ -951,7 +951,7 @@
                         <div class="info-box">
                             <div class="info-title">GitHub Actions + Python Analytics</div>
                             <p>Scheduled daily workflow that fetches GEE logs, processes analytics, and generates
-                                structured data (<code>object_stats.json</code>).</p>
+                                structured data (<code>catalog_stats.json</code>).</p>
                         </div>
                         <div class="info-box">
                             <div class="info-title">Interactive Dashboard</div>
@@ -967,10 +967,10 @@
                             </li>
                             <li><strong>Automated Data Pipeline:</strong> A Python script (ee-usage-stats), run by a
                                 GitHub Action daily, fetches usage numbers and compiles the
-                                <code>object_stats.json</code> file.
+                                <code>catalog_stats.json</code> file.
                             </li>
                             <li><strong>Interactive Dashboard:</strong> This client-side application fetches the
-                                <code>object_stats.json</code> file and uses Chart.js to render interactive charts
+                                <code>catalog_stats.json</code> file and uses Chart.js to render interactive charts
                                 and statistics.
                             </li>
                             <li><strong>30-Day Revolving Window:</strong> User counts reflect unique individuals
@@ -1000,7 +1000,7 @@
             'projects/neon-prod-earthengine/assets/HSI_REFL/001': 'NEON Surface Directional Reflectance'
         };
 
-        const DATA_URL = 'https://gist.githubusercontent.com/samapriya/4290b08cb4e810fd7437ca0a0dc8edae/raw/1cf79022ff3dbc95622f239ff487ca06ea43ae98/neon-stats.json';
+        const DATA_URL = 'catalog_stats.json';
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
