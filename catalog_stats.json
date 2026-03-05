@@ -30771,11 +30771,11 @@
   "data_type": "moving_window",
   "window_size_days": 30,
   "stac_catalog_info": {
-    "total_catalog_datasets": 5,
+    "total_catalog_datasets": 6,
     "catalog_url": "https://storage.googleapis.com/earthengine-stac/catalog/neon-prod-earthengine/catalog.json",
     "catalog_id": "neon-prod-earthengine",
     "catalog_title": "neon-prod-earthengine",
-    "last_updated": "2026-03-04T22:18:42.229013"
+    "last_updated": "2026-03-05T22:18:21.514528"
   },
   "summary": {
     "total_datasets": 7,
