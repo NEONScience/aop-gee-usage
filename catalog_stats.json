@@ -31812,7 +31812,7 @@
     "catalog_url": "https://storage.googleapis.com/earthengine-stac/catalog/neon-prod-earthengine/catalog.json",
     "catalog_id": "neon-prod-earthengine",
     "catalog_title": "neon-prod-earthengine",
-    "last_updated": "2026-03-29T22:18:30.507126"
+    "last_updated": "2026-03-30T22:22:07.466066"
   },
   "summary": {
     "total_datasets": 7,
