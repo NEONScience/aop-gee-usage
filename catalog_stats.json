@@ -32484,6 +32484,77 @@
           "type": "Collection"
         }
       }
+    },
+    {
+      "date": "2026-04-29",
+      "total_users": 867,
+      "total_datasets": 7,
+      "catalog_total_users": 867,
+      "catalog_total_datasets": 7,
+      "datasets": {
+        "projects/neon-prod-earthengine/assets/CHM/001": {
+          "users": 187,
+          "title": "NEON Canopy Height Model (CHM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/HSI_REFL/002": {
+          "users": 155,
+          "title": "NEON Surface Bidirectional Reflectance",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/RGB/001": {
+          "users": 152,
+          "title": "NEON RGB Camera Imagery",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/HSI_REFL/001": {
+          "users": 81,
+          "title": "NEON Surface Directional Reflectance",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/DEM/001": {
+          "users": 103,
+          "title": "NEON Digital Elevation Model (DEM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/CNC/002": {
+          "users": 54,
+          "title": "NEON Canopy Nitrogen Content (CNC)",
+          "type": "Collection"
+        }
+      },
+      "catalog_datasets": {
+        "projects/neon-prod-earthengine/assets/CHM/001": {
+          "users": 187,
+          "title": "NEON Canopy Height Model (CHM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/HSI_REFL/002": {
+          "users": 155,
+          "title": "NEON Surface Bidirectional Reflectance",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/RGB/001": {
+          "users": 152,
+          "title": "NEON RGB Camera Imagery",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/HSI_REFL/001": {
+          "users": 81,
+          "title": "NEON Surface Directional Reflectance",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/DEM/001": {
+          "users": 103,
+          "title": "NEON Digital Elevation Model (DEM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/CNC/002": {
+          "users": 54,
+          "title": "NEON Canopy Nitrogen Content (CNC)",
+          "type": "Collection"
+        }
+      }
     }
   ],
   "data_type": "moving_window",
@@ -32493,26 +32564,26 @@
     "catalog_url": "https://storage.googleapis.com/earthengine-stac/catalog/neon-prod-earthengine/catalog.json",
     "catalog_id": "neon-prod-earthengine",
     "catalog_title": "neon-prod-earthengine",
-    "last_updated": "2026-04-30T22:31:25.783001"
+    "last_updated": "2026-05-01T22:29:31.349874"
   },
   "summary": {
     "total_datasets": 7,
-    "total_usage_events": 545,
-    "latest_total_users": 831,
-    "avg_users_per_dataset": 118.71,
+    "total_usage_events": 546,
+    "latest_total_users": 867,
+    "avg_users_per_dataset": 123.86,
     "date_range": {
       "start": "2024-09-06",
-      "end": "2026-04-28"
+      "end": "2026-04-29"
     },
-    "growth_rate": 102.68
+    "growth_rate": 111.46
   },
   "catalog_summary": {
     "total_catalog_datasets": 7,
-    "latest_catalog_total_users": 831,
+    "latest_catalog_total_users": 867,
     "catalog_percentage_of_datasets": 100.0,
     "catalog_percentage_of_users": 100.0,
-    "avg_users_per_catalog_dataset": 118.71,
-    "catalog_growth_rate": 102.68
+    "avg_users_per_catalog_dataset": 123.86,
+    "catalog_growth_rate": 111.46
   },
   "peaks": {
     "peak_snapshot": {
@@ -32579,8 +32650,8 @@
     "peak_dataset": {
       "id": "projects/neon-prod-earthengine/assets/CHM/001",
       "title": "NEON Canopy Height Model (CHM)",
-      "total_users": 178,
-      "avg_users": 141.7,
+      "total_users": 187,
+      "avg_users": 141.76,
       "type": "Collection"
     },
     "peak_catalog_snapshot": {
@@ -32647,95 +32718,95 @@
     "peak_catalog_dataset": {
       "id": "projects/neon-prod-earthengine/assets/CHM/001",
       "title": "NEON Canopy Height Model (CHM)",
-      "total_users": 178,
-      "avg_users": 141.7,
+      "total_users": 187,
+      "avg_users": 141.76,
       "type": "Collection"
     }
   },
   "dataset_rankings": {
     "projects/neon-prod-earthengine/assets/RGB/001": {
-      "avg_users": 216.88,
-      "total_users": 154415,
-      "appearances": 712,
+      "avg_users": 216.78,
+      "total_users": 154567,
+      "appearances": 713,
       "title": "NEON RGB Camera Imagery",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/CHM/001": {
-      "avg_users": 141.7,
-      "total_users": 100749,
-      "appearances": 711,
+      "avg_users": 141.76,
+      "total_users": 100936,
+      "appearances": 712,
       "title": "NEON Canopy Height Model (CHM)",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/HSI_REFL/001": {
-      "avg_users": 89.88,
-      "total_users": 65611,
-      "appearances": 730,
+      "avg_users": 89.93,
+      "total_users": 65827,
+      "appearances": 732,
       "title": "NEON Surface Directional Reflectance",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/DEM/001": {
-      "avg_users": 116.65,
-      "total_users": 77457,
-      "appearances": 664,
+      "avg_users": 116.63,
+      "total_users": 77560,
+      "appearances": 665,
       "title": "NEON Digital Elevation Model (DEM)",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/HSI_REFL/002": {
-      "avg_users": 104.01,
-      "total_users": 68543,
-      "appearances": 659,
+      "avg_users": 104.09,
+      "total_users": 68698,
+      "appearances": 660,
       "title": "NEON Surface Bidirectional Reflectance",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/CNC/002": {
-      "avg_users": 56.0,
-      "total_users": 56,
-      "appearances": 1,
+      "avg_users": 55.0,
+      "total_users": 110,
+      "appearances": 2,
       "title": "NEON Canopy Nitrogen Content (CNC)",
       "type": "Collection"
     }
   },
   "catalog_dataset_rankings": {
     "projects/neon-prod-earthengine/assets/RGB/001": {
-      "avg_users": 216.88,
-      "total_users": 154415,
-      "appearances": 712,
+      "avg_users": 216.78,
+      "total_users": 154567,
+      "appearances": 713,
       "title": "NEON RGB Camera Imagery",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/CHM/001": {
-      "avg_users": 141.7,
-      "total_users": 100749,
-      "appearances": 711,
+      "avg_users": 141.76,
+      "total_users": 100936,
+      "appearances": 712,
       "title": "NEON Canopy Height Model (CHM)",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/HSI_REFL/001": {
-      "avg_users": 89.88,
-      "total_users": 65611,
-      "appearances": 730,
+      "avg_users": 89.93,
+      "total_users": 65827,
+      "appearances": 732,
       "title": "NEON Surface Directional Reflectance",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/DEM/001": {
-      "avg_users": 116.65,
-      "total_users": 77457,
-      "appearances": 664,
+      "avg_users": 116.63,
+      "total_users": 77560,
+      "appearances": 665,
       "title": "NEON Digital Elevation Model (DEM)",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/HSI_REFL/002": {
-      "avg_users": 104.01,
-      "total_users": 68543,
-      "appearances": 659,
+      "avg_users": 104.09,
+      "total_users": 68698,
+      "appearances": 660,
       "title": "NEON Surface Bidirectional Reflectance",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/CNC/002": {
-      "avg_users": 56.0,
-      "total_users": 56,
-      "appearances": 1,
+      "avg_users": 55.0,
+      "total_users": 110,
+      "appearances": 2,
       "title": "NEON Canopy Nitrogen Content (CNC)",
       "type": "Collection"
     }
@@ -36004,6 +36075,12 @@
       "user_change": 129,
       "dataset_change": 1,
       "user_change_pct": 18.38
+    },
+    {
+      "date": "2026-04-29",
+      "user_change": 36,
+      "dataset_change": 0,
+      "user_change_pct": 4.33
     }
   ],
   "catalog_snapshot_trends": [
@@ -39270,6 +39347,12 @@
       "user_change": 129,
       "dataset_change": 1,
       "user_change_pct": 18.38
+    },
+    {
+      "date": "2026-04-29",
+      "user_change": 36,
+      "dataset_change": 0,
+      "user_change_pct": 4.33
     }
   ]
 }
