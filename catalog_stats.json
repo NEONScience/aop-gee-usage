@@ -36601,6 +36601,47 @@
           "type": "Collection"
         }
       }
+    },
+    {
+      "date": "2026-07-17",
+      "total_users": 412,
+      "total_datasets": 4,
+      "catalog_total_users": 412,
+      "catalog_total_datasets": 4,
+      "datasets": {
+        "projects/neon-prod-earthengine/assets/DEM/001": {
+          "users": 82,
+          "title": "NEON Digital Elevation Model (DEM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/CHM/001": {
+          "users": 101,
+          "title": "NEON Canopy Height Model (CHM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/RGB/001": {
+          "users": 88,
+          "title": "NEON RGB Camera Imagery",
+          "type": "Collection"
+        }
+      },
+      "catalog_datasets": {
+        "projects/neon-prod-earthengine/assets/DEM/001": {
+          "users": 82,
+          "title": "NEON Digital Elevation Model (DEM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/CHM/001": {
+          "users": 101,
+          "title": "NEON Canopy Height Model (CHM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/RGB/001": {
+          "users": 88,
+          "title": "NEON RGB Camera Imagery",
+          "type": "Collection"
+        }
+      }
     }
   ],
   "data_type": "moving_window",
@@ -36610,26 +36651,26 @@
     "catalog_url": "https://storage.googleapis.com/earthengine-stac/catalog/neon-prod-earthengine/catalog.json",
     "catalog_id": "neon-prod-earthengine",
     "catalog_title": "National Ecological Observatory Network",
-    "last_updated": "2026-07-18T22:27:13.374832"
+    "last_updated": "2026-07-19T22:26:58.039212"
   },
   "summary": {
-    "total_datasets": 5,
-    "total_usage_events": 622,
-    "latest_total_users": 465,
-    "avg_users_per_dataset": 93.0,
+    "total_datasets": 4,
+    "total_usage_events": 623,
+    "latest_total_users": 412,
+    "avg_users_per_dataset": 103.0,
     "date_range": {
       "start": "2024-09-06",
-      "end": "2026-07-16"
+      "end": "2026-07-17"
     },
-    "growth_rate": 13.41
+    "growth_rate": 0.49
   },
   "catalog_summary": {
-    "total_catalog_datasets": 5,
-    "latest_catalog_total_users": 465,
+    "total_catalog_datasets": 4,
+    "latest_catalog_total_users": 412,
     "catalog_percentage_of_datasets": 100.0,
     "catalog_percentage_of_users": 100.0,
-    "avg_users_per_catalog_dataset": 93.0,
-    "catalog_growth_rate": 13.41
+    "avg_users_per_catalog_dataset": 103.0,
+    "catalog_growth_rate": 0.49
   },
   "peaks": {
     "peak_snapshot": {
@@ -36697,7 +36738,7 @@
       "id": "projects/neon-prod-earthengine/assets/CHM/001",
       "title": "NEON Canopy Height Model (CHM)",
       "total_users": 101,
-      "avg_users": 139.96,
+      "avg_users": 139.91,
       "type": "Collection"
     },
     "peak_catalog_snapshot": {
@@ -36765,22 +36806,22 @@
       "id": "projects/neon-prod-earthengine/assets/CHM/001",
       "title": "NEON Canopy Height Model (CHM)",
       "total_users": 101,
-      "avg_users": 139.96,
+      "avg_users": 139.91,
       "type": "Collection"
     }
   },
   "dataset_rankings": {
     "projects/neon-prod-earthengine/assets/RGB/001": {
-      "avg_users": 207.82,
-      "total_users": 163967,
-      "appearances": 789,
+      "avg_users": 207.66,
+      "total_users": 164055,
+      "appearances": 790,
       "title": "NEON RGB Camera Imagery",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/CHM/001": {
-      "avg_users": 139.96,
-      "total_users": 110988,
-      "appearances": 793,
+      "avg_users": 139.91,
+      "total_users": 111089,
+      "appearances": 794,
       "title": "NEON Canopy Height Model (CHM)",
       "type": "Collection"
     },
@@ -36793,8 +36834,8 @@
     },
     "projects/neon-prod-earthengine/assets/DEM/001": {
       "avg_users": 115.11,
-      "total_users": 88178,
-      "appearances": 766,
+      "total_users": 88401,
+      "appearances": 768,
       "title": "NEON Digital Elevation Model (DEM)",
       "type": "Collection"
     },
@@ -36815,16 +36856,16 @@
   },
   "catalog_dataset_rankings": {
     "projects/neon-prod-earthengine/assets/RGB/001": {
-      "avg_users": 207.82,
-      "total_users": 163967,
-      "appearances": 789,
+      "avg_users": 207.66,
+      "total_users": 164055,
+      "appearances": 790,
       "title": "NEON RGB Camera Imagery",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/CHM/001": {
-      "avg_users": 139.96,
-      "total_users": 110988,
-      "appearances": 793,
+      "avg_users": 139.91,
+      "total_users": 111089,
+      "appearances": 794,
       "title": "NEON Canopy Height Model (CHM)",
       "type": "Collection"
     },
@@ -36837,8 +36878,8 @@
     },
     "projects/neon-prod-earthengine/assets/DEM/001": {
       "avg_users": 115.11,
-      "total_users": 88178,
-      "appearances": 766,
+      "total_users": 88401,
+      "appearances": 768,
       "title": "NEON Digital Elevation Model (DEM)",
       "type": "Collection"
     },
@@ -40583,6 +40624,12 @@
       "user_change": -4,
       "dataset_change": 0,
       "user_change_pct": -0.85
+    },
+    {
+      "date": "2026-07-17",
+      "user_change": -53,
+      "dataset_change": -1,
+      "user_change_pct": -11.4
     }
   ],
   "catalog_snapshot_trends": [
@@ -44311,6 +44358,12 @@
       "user_change": -4,
       "dataset_change": 0,
       "user_change_pct": -0.85
+    },
+    {
+      "date": "2026-07-17",
+      "user_change": -53,
+      "dataset_change": -1,
+      "user_change_pct": -11.4
     }
   ]
 }
