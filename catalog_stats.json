@@ -38928,6 +38928,57 @@
           "type": "Collection"
         }
       }
+    },
+    {
+      "date": "2026-09-04",
+      "total_users": 301,
+      "total_datasets": 4,
+      "catalog_total_users": 301,
+      "catalog_total_datasets": 4,
+      "datasets": {
+        "projects/neon-prod-earthengine/assets/RGB/001": {
+          "users": 94,
+          "title": "NEON RGB Camera Imagery",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/CHM/001": {
+          "users": 82,
+          "title": "NEON Canopy Height Model (CHM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/DEM/001": {
+          "users": 64,
+          "title": "NEON Digital Elevation Model (DEM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/HSI_REFL/002": {
+          "users": 61,
+          "title": "NEON Surface Bidirectional Reflectance",
+          "type": "Collection"
+        }
+      },
+      "catalog_datasets": {
+        "projects/neon-prod-earthengine/assets/RGB/001": {
+          "users": 94,
+          "title": "NEON RGB Camera Imagery",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/CHM/001": {
+          "users": 82,
+          "title": "NEON Canopy Height Model (CHM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/DEM/001": {
+          "users": 64,
+          "title": "NEON Digital Elevation Model (DEM)",
+          "type": "Collection"
+        },
+        "projects/neon-prod-earthengine/assets/HSI_REFL/002": {
+          "users": 61,
+          "title": "NEON Surface Bidirectional Reflectance",
+          "type": "Collection"
+        }
+      }
     }
   ],
   "data_type": "moving_window",
@@ -38937,26 +38988,26 @@
     "catalog_url": "https://storage.googleapis.com/earthengine-stac/catalog/neon-prod-earthengine/catalog.json",
     "catalog_id": "neon-prod-earthengine",
     "catalog_title": "National Ecological Observatory Network",
-    "last_updated": "2026-09-05T22:21:25.989775"
+    "last_updated": "2026-09-06T22:20:16.782390"
   },
   "summary": {
-    "total_datasets": 5,
-    "total_usage_events": 669,
-    "latest_total_users": 376,
-    "avg_users_per_dataset": 75.2,
+    "total_datasets": 4,
+    "total_usage_events": 670,
+    "latest_total_users": 301,
+    "avg_users_per_dataset": 75.25,
     "date_range": {
       "start": "2024-09-06",
-      "end": "2026-09-03"
+      "end": "2026-09-04"
     },
-    "growth_rate": -8.29
+    "growth_rate": -26.59
   },
   "catalog_summary": {
-    "total_catalog_datasets": 5,
-    "latest_catalog_total_users": 376,
+    "total_catalog_datasets": 4,
+    "latest_catalog_total_users": 301,
     "catalog_percentage_of_datasets": 100.0,
     "catalog_percentage_of_users": 100.0,
-    "avg_users_per_catalog_dataset": 75.2,
-    "catalog_growth_rate": -8.29
+    "avg_users_per_catalog_dataset": 75.25,
+    "catalog_growth_rate": -26.59
   },
   "peaks": {
     "peak_snapshot": {
@@ -39021,10 +39072,10 @@
       }
     },
     "peak_dataset": {
-      "id": "projects/neon-prod-earthengine/assets/CHM/001",
-      "title": "NEON Canopy Height Model (CHM)",
-      "total_users": 84,
-      "avg_users": 137.54,
+      "id": "projects/neon-prod-earthengine/assets/RGB/001",
+      "title": "NEON RGB Camera Imagery",
+      "total_users": 94,
+      "avg_users": 196.95,
       "type": "Collection"
     },
     "peak_catalog_snapshot": {
@@ -39089,25 +39140,25 @@
       }
     },
     "peak_catalog_dataset": {
-      "id": "projects/neon-prod-earthengine/assets/CHM/001",
-      "title": "NEON Canopy Height Model (CHM)",
-      "total_users": 84,
-      "avg_users": 137.54,
+      "id": "projects/neon-prod-earthengine/assets/RGB/001",
+      "title": "NEON RGB Camera Imagery",
+      "total_users": 94,
+      "avg_users": 196.95,
       "type": "Collection"
     }
   },
   "dataset_rankings": {
     "projects/neon-prod-earthengine/assets/RGB/001": {
-      "avg_users": 197.07,
-      "total_users": 171254,
-      "appearances": 869,
+      "avg_users": 196.95,
+      "total_users": 171348,
+      "appearances": 870,
       "title": "NEON RGB Camera Imagery",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/CHM/001": {
-      "avg_users": 137.54,
-      "total_users": 115533,
-      "appearances": 840,
+      "avg_users": 137.47,
+      "total_users": 115615,
+      "appearances": 841,
       "title": "NEON Canopy Height Model (CHM)",
       "type": "Collection"
     },
@@ -39119,16 +39170,16 @@
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/DEM/001": {
-      "avg_users": 112.97,
-      "total_users": 92412,
-      "appearances": 818,
+      "avg_users": 112.91,
+      "total_users": 92476,
+      "appearances": 819,
       "title": "NEON Digital Elevation Model (DEM)",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/HSI_REFL/002": {
-      "avg_users": 101.94,
-      "total_users": 76657,
-      "appearances": 752,
+      "avg_users": 101.88,
+      "total_users": 76718,
+      "appearances": 753,
       "title": "NEON Surface Bidirectional Reflectance",
       "type": "Collection"
     },
@@ -39142,16 +39193,16 @@
   },
   "catalog_dataset_rankings": {
     "projects/neon-prod-earthengine/assets/RGB/001": {
-      "avg_users": 197.07,
-      "total_users": 171254,
-      "appearances": 869,
+      "avg_users": 196.95,
+      "total_users": 171348,
+      "appearances": 870,
       "title": "NEON RGB Camera Imagery",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/CHM/001": {
-      "avg_users": 137.54,
-      "total_users": 115533,
-      "appearances": 840,
+      "avg_users": 137.47,
+      "total_users": 115615,
+      "appearances": 841,
       "title": "NEON Canopy Height Model (CHM)",
       "type": "Collection"
     },
@@ -39163,16 +39214,16 @@
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/DEM/001": {
-      "avg_users": 112.97,
-      "total_users": 92412,
-      "appearances": 818,
+      "avg_users": 112.91,
+      "total_users": 92476,
+      "appearances": 819,
       "title": "NEON Digital Elevation Model (DEM)",
       "type": "Collection"
     },
     "projects/neon-prod-earthengine/assets/HSI_REFL/002": {
-      "avg_users": 101.94,
-      "total_users": 76657,
-      "appearances": 752,
+      "avg_users": 101.88,
+      "total_users": 76718,
+      "appearances": 753,
       "title": "NEON Surface Bidirectional Reflectance",
       "type": "Collection"
     },
@@ -43192,6 +43243,12 @@
       "user_change": -1,
       "dataset_change": 0,
       "user_change_pct": -0.27
+    },
+    {
+      "date": "2026-09-04",
+      "user_change": -75,
+      "dataset_change": -1,
+      "user_change_pct": -19.95
     }
   ],
   "catalog_snapshot_trends": [
@@ -47202,6 +47259,12 @@
       "user_change": -1,
       "dataset_change": 0,
       "user_change_pct": -0.27
+    },
+    {
+      "date": "2026-09-04",
+      "user_change": -75,
+      "dataset_change": -1,
+      "user_change_pct": -19.95
     }
   ]
 }
