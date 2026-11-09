@@ -42176,7 +42176,7 @@
     "catalog_url": "https://storage.googleapis.com/earthengine-stac/catalog/neon-prod-earthengine/catalog.json",
     "catalog_id": "neon-prod-earthengine",
     "catalog_title": "National Ecological Observatory Network",
-    "last_updated": "2026-11-08T22:17:04.700243"
+    "last_updated": "2026-11-09T22:15:32.545225"
   },
   "summary": {
     "total_datasets": 9,
